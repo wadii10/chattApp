@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       body: SafeArea(
         minimum: const EdgeInsets.all(20),
@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
             "photoUrl" : firebaseUser.photoURL,
             "id" : firebaseUser.uid,
             "aboutMe" : "hey! I am new in Social App",
-            "createdAt" : DateTime.now().toString(),
+            //"createdAt" : DateTime.now().millisecondsSinceEpoch.toString(),
             "chattingWith" : null
           });
 

@@ -23,7 +23,9 @@ class SettingsOpt extends StatelessWidget {
         ),
         backgroundColor: Colors.black,
         title: Text("Account Settings",
-          style:TextStyle(color: Colors.white,fontWeight:FontWeight.bold) ,
+          style:TextStyle(
+              color: Colors.white,
+              fontWeight:FontWeight.bold) ,
         ),
         centerTitle:true ,
 
@@ -58,6 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     readDataFromLocal();
   }
@@ -84,13 +87,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // Sélectionner une image depuis la galerie
     File pickedFile = (await imagePicker.pickImage(
         source: ImageSource.gallery)) as File;
-    if (pickedFile != null) {
-      setState(() {
-        this.imageAvatar = pickedFile as File?;
-        isLoading = true;
-      });
-    }
-    //upload image to firestore
+    setState(() {
+      this.imageAvatar = pickedFile as File?;
+      isLoading = true;
+    });
+      //upload image to firestore
     uploadImage();
 
   }

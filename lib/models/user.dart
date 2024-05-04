@@ -4,13 +4,13 @@ class User {
   final String id;
   final String photoUrl;
   final String nickname;
-  final DateTime createdAt;
+  //final DateTime createdAt;
 
   User({
     required this.id,
     required this.photoUrl,
     required this.nickname,
-    required this.createdAt,
+    //required this.createdAt,
   });
 
   factory User.fromDocument(DocumentSnapshot doc) {
@@ -20,7 +20,7 @@ class User {
       id: doc.id,
       photoUrl: data['photoUrl'],
       nickname: data['nickname'],
-      createdAt: data['createdAt'].toDate(),
+      //createdAt: data['createdAt'],
     );
   }
 }
