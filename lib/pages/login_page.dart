@@ -1,13 +1,19 @@
+import 'dart:ui';
 import 'package:appsocial/pages/home_page.dart';
-import 'package:appsocial/widgets/progress_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:iconly/iconly.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
+
+const kHeadingText = "Connect with your friends and chat in real-time";
+const kBodyText =
+    "Stay connected with your loved ones wherever you are. Share messages, photos, and more, all in one place.";
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -47,51 +53,67 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  @override
+
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [Colors.black, Colors.grey]
-          )
-        ),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text("Social App", style: TextStyle(fontSize: 82.0, color: Colors.white, fontFamily: "Signatra"),),
-            GestureDetector(
-              onTap: controlSignIn,
-              child: Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: 270.0,
-                      height: 65.0,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/images/btn_google_signin.png"),
-                          fit: BoxFit.cover,
-                        )
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: isLoading ? circularProgress() : Container(),
-                    ),
-                  ],
+      body: SafeArea(
+        minimum: const EdgeInsets.all(20),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    height: MediaQuery.of(context).size.height*0.3,
+                    child: Lottie.asset('animations/welcome.json'),
+                  ),
                 ),
               ),
-            )
-          ],
+
+
+              Text(
+                kHeadingText,
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: Text(
+                  kBodyText,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              SizedBox(
+                height: 40,
+              ),
+              FilledButton.tonalIcon(
+                onPressed: controlSignIn,
+                icon: const Icon(IconlyLight.login),
+                label: const Text("Continue with Google"),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+
 
   Future<dynamic> controlSignIn() async {
 
@@ -113,6 +135,7 @@ class _LoginPageState extends State<LoginPage> {
 
       //success
       if(firebaseUser != null) {
+        showSuccessAnimation(context);
         // check user already signed in
         final QuerySnapshot resultQuery = await FirebaseFirestore.instance.collection("users").where("id", isEqualTo: firebaseUser.uid).get();
         final List<DocumentSnapshot> documentSnapshot = resultQuery.docs;
@@ -139,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
           await preferences?.setString("photoUrl", documentSnapshot[0]["photoUrl"]);
           await preferences?.setString("aboutMe", documentSnapshot[0]["aboutMe"]);
         }
-        Fluttertoast.showToast(msg: "welcome!");
+
         setState(() {
           isLoading = false;
         });
@@ -174,4 +197,28 @@ class _LoginPageState extends State<LoginPage> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
+}
+void showSuccessAnimation(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.black
+        .withOpacity(0.5), // Set the barrier color to a semi-transparent black
+    builder: (context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Set the blur radius
+          child: ColorFiltered(
+            colorFilter:
+            ColorFilter.mode(Colors.transparent, BlendMode.srcATop),
+            child: Lottie.asset(
+              'animations/login_successfully.json',
+              width: 200,
+              height: 200,
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
